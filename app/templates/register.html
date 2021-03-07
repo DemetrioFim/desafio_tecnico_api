@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Login</title>
+</head>
+<body>
+    {% if  not register_sucess %}
+        <h1>Olá! Seja bem vindo.</h1>
+        <h2>Insira as inforamções para teu cadastro.</h2>
+        {% if register_fail %}
+            <h1 class="register_fail">O EMAIL JÁ EXISTE! TENTE LOGAR.</h1>
+            <input type="submit" value="ENTRAR" name="button">
+        {% endif %}
+        <form method="POST">
+            <div class="register_form_input">
+                <label>
+                    Nome
+                    <input class="name_cliente" id="name_cliente" name="name_cliente">
+                </label>
+                <br><br>
+                <label>
+                    Email
+                    <input class="email_cliente" id="email_cliente" name="email_cliente">
+                </label>
+                <br><br>
+                <input type="submit" value="CADASTRAR" name="button">
+            </div>
+        </form>
+        <br>
+    {% else %}
+        <div>
+            <h1>
+                USUÁRIO CADASTRADO COM SUCESSO!
+            </h1>
+            <br>
+            <form method="POST">
+                <label>
+                    <h2>Clique aqui para efetuar o login</h2>
+                    <input type="submit" value="LOGIN" name="button">
+                </label>
+            </form>
+        </div>
+    {% endif %}
+</body>

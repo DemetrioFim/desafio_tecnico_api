@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Login</title>
+</head>
+<body>
+    <h1>Olá! Seja bem vindo.</h1>
+    <h2>Insira o teu nome e email para logar.</h2>
+    {% if login_fail %}
+        <h1 class="login_fail">O NOME E EMAIL NÃO EXISTEM, CORRIJA AS INFORAMÇÕES OU CADASTRE-SE!</h1>
+    {% endif %}
+    <form method="POST">
+        <div class="form_input">
+            <label>
+                Nome <input class="name_cliente" id="name_cliente" name="name_cliente">
+            </label>
+            <br><br>
+            <label>
+                Email <input class="email_cliente" id="email_cliente" name="email_cliente">
+            </label>
+            <br><br>
+            <input type="submit" value="ENTRAR" name="button">
+            <input type="submit" value="CADASTRAR" name="button">
+        </div>
+    </form>
+    <br>
+</body>
