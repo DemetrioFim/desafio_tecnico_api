@@ -5,6 +5,7 @@
     <title>Login</title>
 </head>
 <body>
+<div class="user_login" style="width=40%;">
     <h1>Olá! Seja bem vindo.</h1>
     <h2>Insira o teu nome e email para logar.</h2>
     {% if login_fail %}
@@ -24,5 +25,11 @@
             <input type="submit" value="CADASTRAR" name="button">
         </div>
     </form>
-    <br>
+</div>
+<br>
+<div class="super_admin" style="width=40%;">
+    <form method="POST">
+        <label>Entre com o SuperAdmin clicando aqui: <input type="submit" value="SUPERADMIN" name="button"></label>
+    </form>
+</div>
 </body>

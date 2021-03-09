@@ -91,7 +91,7 @@ class MagaluDB(DB):
             cliente_id SERIAL PRIMARY KEY,
             cliente_name VARCHAR (50),
             cliente_email VARCHAR (50) UNIQUE,
-            TOKEN VARCHAR (50) UNIQUE);
+            cliente_token VARCHAR (100) UNIQUE);
         """
         try:
             self.exec_query(query)
@@ -124,6 +124,12 @@ class MagaluDB(DB):
         token = self.create_token(name+email)
         query = f"INSERT INTO clientes (cliente_name, cliente_email, cliente_token) VALUES ('{name.lower()}', '{email.lower()}', '{token}')"
         return self.exec_query(query)
+
+    def set_api_info_into_list(self, id_produto, lista, index):
+        response = requests.get(f"http://challenge-api.luizalabs.com/api/product/{id_produto}/")
+        data = response.json()
+        lista[index] = data
+
 
 class User(MagaluDB):
     def __init__(self):
@@ -210,7 +216,62 @@ class User(MagaluDB):
         self.set_list_favorites()
         return result
 
-    def set_api_info_into_list(self, id_produto, lista, index):
-        response = requests.get(f"http://challenge-api.luizalabs.com/api/product/{id_produto}/")
-        data = response.json()
-        lista[index] = data
+
+class SuperAdmin(MagaluDB):
+    def __init__(self):
+        super().__init__()
+        self.__all_tokens = None
+        self.set_all_tokens()
+
+    def get_all_clientes(self, indf=False):
+        query = "SELECT * FROM clientes"
+        conn = self.connection()
+        df = pd.read_sql_query(query, conn)
+        if indf:
+            return df
+        else:
+            columns = df.columns.tolist()
+            values = df.values.tolist()
+            return columns, values
+
+    def set_all_tokens(self):
+        query = "SELECT cliente_token FROM clientes"
+        conn = self.connection()
+        df = pd.read_sql_query(query, conn)
+        values = df.values.tolist()
+        self.__all_tokens = values
+
+    def get_all_tokens(self):
+        return self.__all_tokens
+
+    def get_all_favorite_table(self, indf=False):
+        query = "select * from favoritos"
+        conn = self.connection()
+        df = pd.read_sql_query(query, conn)
+        if indf:
+            return df
+        else:
+            columns = df.columns.tolist()
+            values = df.values.tolist()
+            return columns, values
+
+    def get_favorite_by_token(self, token, indf=False):
+        query = f"select * from favoritos where cliente_token = '{token}'"
+        conn = self.connection()
+        df = pd.read_sql_query(query, conn)
+        if indf:
+            return df
+        else:
+            columns = df.columns.tolist()
+            values = df.values.tolist()
+            return columns, values
+
+    def get_cliente_name_by_token(self, token, indf=False):
+        query = f"select cliente_name from clientes where cliente_token = '{token}'"
+        conn = self.connection()
+        df = pd.read_sql_query(query, conn)
+        if indf:
+            return df
+        else:
+            cliente_name = df['cliente_name'].iloc[0]
+            return cliente_name

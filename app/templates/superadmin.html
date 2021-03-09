@@ -1,10 +1,76 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>Title</title>
+    <meta charset="UTF-8">
+    <title>SUPERADMIN</title>
+    <style>
+        .tables {
+          font-family: Arial, Helvetica, sans-serif;
+          border-collapse: collapse;
+          width: 50%;
+        }
+
+        .tables td, #customers th {
+          border: 1px solid #ddd;
+          padding: 8px;
+        }
+
+        .tables tr:nth-child(even){background-color: #f2f2f2;}
+
+        .tables tr:hover {background-color: #ddd;}
+    </style>
 </head>
 <body>
+    <div class="logout">
+        <form method="POST">
+             <input style="float:right;" type="submit" value="Sair" name="logout">
+        </form>
+    </div>
 
+    <div class="tables" style="float:left; width=40%">
+        <table class="list_clientes">
+            <thead>
+                <tr>
+                    {% for col in clientes_columns %}
+                        <th>{{col}}</th>
+                    {% endfor %}
+                </tr>
+            </thead>
+            <tbody>
+                {% for row in clientes_values %}
+                    <tr>
+                        {% for item in row %}
+                            <td>{{item}}</td>
+                        {% endfor %}
+                        <form method="POST">
+                            <td><input type="submit" value="Filtrar" name="button"></td>
+                            <input type="hidden" value="{{ row[-1] }}" name="cliente_token">
+                        </form>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <div class="tables" style="float:right; width=40%">
+        <table class="list_products">
+            <thead>
+                <tr>
+                    {% for col in favorites_columns %}
+                        <th>{{col}}</th>
+                    {% endfor %}
+                </tr>
+            </thead>
+            <tbody>
+                {% for row in favorites_values %}
+                    <tr>
+                        {% for item in row %}
+                            <td>{{item}}</td>
+                        {% endfor %}
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
 </body>
 </html>
