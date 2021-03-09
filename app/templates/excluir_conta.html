@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Excluir</title>
+</head>
+<body>
+{% if not excluido %}
+    <form method="POST">
+        <div class="form_input">
+            <label>
+                Nome <input class="name_cliente" id="name_cliente" name="name_cliente">
+            </label>
+            <br><br>
+            <label>
+                Email <input type="email" class="email_cliente" id="email_cliente" name="email_cliente">
+            </label>
+            <br><br>
+            <input type="submit" value="EXCLUIR CONTA" name="button">
+        </div>
+    </form>
+{% else %}
+    <form method="post">
+        <h1>A tua conta já foi excluída, clique no botão abaixo para ir à página inicial</h1>
+        <input type="submit" value="INICIO" name="button">
+    </form>
+{% endif %}
+</body>
+</html>

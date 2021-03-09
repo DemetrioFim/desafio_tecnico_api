@@ -69,7 +69,7 @@ class DB():
 
 
 class MagaluDB(DB):
-    def __init__(self, user='postgres', password='Menedor0!1', host='localhost', port=5433, db='magalu'):
+    def __init__(self, user='TESTE', password='TESTE', host='localhost', port=5433, db='magalu'):
         super().__init__(user, password, host, port, db)
         self.create_database(db)
         self.create_clientes_table()
@@ -215,6 +215,15 @@ class User(MagaluDB):
         result = self.exec_query(query)
         self.set_list_favorites()
         return result
+
+    def remove_cliente(self):
+        query_clientes = f"""DELETE FROM clientes 
+                            WHERE cliente_name = '{self.__name}' and cliente_email = '{self.__email}'"""
+        query_favoritos = f"""DELETE FROM favoritos 
+                            WHERE cliente_token = '{self.__token}'"""
+        self.exec_query(query_clientes)
+        self.exec_query(query_favoritos)
+        return True
 
 
 class SuperAdmin(MagaluDB):

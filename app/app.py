@@ -38,6 +38,10 @@ def login():
         elif request.form['button'] == 'SUPERADMIN':
             super_admin = db.SuperAdmin()
             return redirect(url_for('superadmin'))
+
+        elif request.form['button'] == 'EXCLUIR CONTA':
+            return redirect(url_for('excluir_conta'))
+
     else:
         return render_template('login.html')
 
@@ -48,6 +52,24 @@ def logout():
     user = None
     super_admin = None
     return redirect(url_for('login'))
+
+@app.route('/excluir_conta', methods=['GET','POST'])
+def excluir_conta():
+    global user
+    if request.method == 'POST':
+        if request.form['button'] == 'EXCLUIR CONTA':
+            name = request.form['name_cliente']
+            email = request.form['email_cliente']
+            user = db.User()
+            user.get_user_info(name, email)
+            user.remove_cliente()
+            user = None
+            return render_template('excluir_conta.html', excluido=True)
+        elif request.form['button'] == 'INICIO':
+            return redirect(url_for('login'))
+
+    return render_template('excluir_conta.html', excluido=False)
+
 
 @app.route("/register", methods=['GET','POST'])
 def register():
@@ -132,7 +154,6 @@ def favoritos():
 @app.route('/superadmin', methods=['GET','POST'])
 def superadmin():
     global super_admin
-    print(request.form)
     if request.method == 'POST':
         if 'logout' in request.form:
             return redirect(url_for('logout'))
@@ -146,7 +167,7 @@ def superadmin():
         columns, values = super_admin.get_all_favorite_table()
 
     favorites_columns, favorite_final_list = get_favorites_info(values=values)
-    clientes_columns, clientes_values= get_clientes_info()
+    clientes_columns, clientes_values = get_clientes_info()
 
     return render_template('superadmin.html',
                            favorites_columns=favorites_columns,
@@ -188,8 +209,10 @@ def get_favorites_info(values):
 def get_clientes_info():
     global super_admin
     df = super_admin.get_all_clientes(indf=True)
+    df = df[df['cliente_token'] != '']
     columns = ['cliente_name', 'cliente_email', 'cliente_token']
     values = df[columns].values.tolist()
+    values.insert(0, ['' for _ in columns])
     return columns, values
 
 if __name__ == '__main__':
