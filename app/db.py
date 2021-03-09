@@ -1,6 +1,7 @@
 import psycopg2
 import base64
 import pandas as pd
+import requests
 
 class DB():
     def __init__(self, user, password, host, port, db):
@@ -71,6 +72,8 @@ class MagaluDB(DB):
     def __init__(self, user='postgres', password='Menedor0!1', host='localhost', port=5433, db='magalu'):
         super().__init__(user, password, host, port, db)
         self.create_database(db)
+        self.create_clientes_table()
+        self.create_favoritos_table()
 
     def create_token(self, text):
         bytes_text = bytes(text.lower(), 'utf-8')
@@ -90,7 +93,20 @@ class MagaluDB(DB):
             cliente_email VARCHAR (50) UNIQUE,
             TOKEN VARCHAR (50) UNIQUE);
         """
-        print(query)
+        try:
+            self.exec_query(query)
+            return True
+        except Exception as e:
+            print(e)
+            return False
+
+    def create_favoritos_table(self):
+        query = f"""
+        CREATE TABLE favoritos (
+            cliente_token character varying(100) NOT NULL,
+            id_produto character varying(100) NOT NULL
+        );
+        """
         try:
             self.exec_query(query)
             return True
@@ -100,7 +116,6 @@ class MagaluDB(DB):
 
     def get_all_from_table(self, table_name):
         query = f'SELECT * FROM "{table_name}"'
-        print(query)
         conn = self.connection()
         df = pd.read_sql_query(query, conn)
         return df
@@ -117,6 +132,9 @@ class User(MagaluDB):
         self.__email = None
         self.__id = None
         self.__token = None
+        self.__list_favorites = None
+
+        self.set_list_favorites()
 
     def set_name(self, name):
         self.__name = name
@@ -157,5 +175,42 @@ class User(MagaluDB):
             self.set_name(user_info[1])
             self.set_email(user_info[2])
             self.set_token(user_info[3])
+            self.set_list_favorites()
         except:
             raise Exception("The user and email don't exist")
+
+    def get_list_favorites(self):
+        return self.__list_favorites
+
+    def set_list_favorites(self):
+        query = f"""
+        SELECT id_produto FROM favoritos
+        WHERE cliente_token = '{self.get_token()}'
+        """
+        conn = self.connection()
+        df = pd.read_sql_query(query, conn)
+        lista = df['id_produto'].values.tolist()
+        self.__list_favorites = lista
+
+    def insert_into_favorites(self, id_produto):
+        if id_produto not in self.get_list_favorites():
+            query = f"""
+            INSERT INTO favoritos VALUES ('{self.get_token()}', '{id_produto}');"""
+            result = self.exec_query(query)
+            self.set_list_favorites()
+            return result
+        else:
+            raise Exception("Produto já está cadastrado!")
+
+    def remove_from_favorites(self, id_produto):
+        query = f"""
+        DELETE FROM favoritos
+        WHERE cliente_token = '{self.get_token()}' and id_produto = '{id_produto}'"""
+        result = self.exec_query(query)
+        self.set_list_favorites()
+        return result
+
+    def set_api_info_into_list(self, id_produto, lista, index):
+        response = requests.get(f"http://challenge-api.luizalabs.com/api/product/{id_produto}/")
+        data = response.json()
+        lista[index] = data

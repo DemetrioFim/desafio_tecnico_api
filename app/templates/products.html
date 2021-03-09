@@ -14,25 +14,58 @@
     </style>
 </head>
 <body>
-    {% for product in list_products %}
-        <div class="product_field">
-            {{ product['title'] }}
-            <br>
-            <img src = "{{ product['image'] }}" style="width:170px;height:170px;margin-left:15px;">
-            <br>
-            R${{ product['price'] }}
-        </div>
-        <br>
-    {% endfor %}
-    <br>
+<div>
     <div class="change_page">
-        <form method="POST" id="form_change_page">
+        <form method="POST">
             {% if page_number > 1 %}
-                <input type="submit" value="<" name="change_page">
+                <input style="float:left;" type="submit" value="<" name="change_page">
             {% endif %}
-            <p>{{ page_number }}</p>
-            <input type="submit" value=">" name="change_page">
+            <p style="float:left;">{{ page_number }}</p>
+            <input style="float:left;" type="submit" value=">" name="change_page">
         </form>
     </div>
+</div>
+<div>
+    <div class="logout">
+        <form method="POST">
+             <input style="float:right;" type="submit" value="Sair" name="logout">
+        </form>
+    </div>
+</div>
+
+<div>
+    <form method="POST">
+        <input type="submit" value="MEUS FAVORITOS" name="my_favorites">
+    </form>
+</div>
+
+<div>
+    <div class="all_products">
+        {% for product in list_products %}
+            <div class="product_field" id="{{ product['id'] }}">
+                {{ product['title'] }}
+                <br>
+                <img src = "{{ product['image'] }}" style="width:170px;height:170px;margin-left:15px;">
+                <br>
+                <form method="POST">
+                    <input type="hidden" value="{{ product['id'] }}" name="id_produto">
+                    {% if product['id'] in favoritos %}
+                        <input type="submit" value="desfavoritar" name="button_favorite">
+                    {% else %}
+                        <input type="submit" value="favoritar" name="button_favorite">
+                    {% endif %}
+                </form>
+
+                <br>
+                R${{ product['price'] }}
+                <br>
+                {% if product['reviewScore'] %}
+                    Avaliação: {{ product['reviewScore'] }}
+                {% endif %}
+            </div>
+            <br>
+        {% endfor %}
+    </div>
+</div>
 </body>
 </html>
