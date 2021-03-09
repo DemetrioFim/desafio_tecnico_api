@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Produtos</title>
+    <style>
+        .product_field {
+            width: 20%;
+            box-shadow: 0px 0px 1px;
+            text-align: center;
+            float: left;
+            margin: 1%;
+        }
+    </style>
+</head>
+<body>
+    {% for product in list_products %}
+        <div class="product_field">
+            {{ product['title'] }}
+            <br>
+            <img src = "{{ product['image'] }}" style="width:170px;height:170px;margin-left:15px;">
+            <br>
+            R${{ product['price'] }}
+        </div>
+        <br>
+    {% endfor %}
+    <br>
+    <div class="change_page">
+        <form method="POST" id="form_change_page">
+            {% if page_number > 1 %}
+                <input type="submit" value="<" name="change_page">
+            {% endif %}
+            <p>{{ page_number }}</p>
+            <input type="submit" value=">" name="change_page">
+        </form>
+    </div>
+</body>
+</html>

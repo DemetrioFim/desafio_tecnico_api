@@ -147,7 +147,7 @@ class User(MagaluDB):
     def get_user_info(self, name, email):
         query = f"""
         SELECT * FROM clientes
-        WHERE cliente_name = '{name}' and cliente_email = '{email}'"""
+        WHERE cliente_name = '{name.lower()}' and cliente_email = '{email.lower()}'"""
         conn = self.connection()
         try:
             df = pd.read_sql_query(query, conn)
